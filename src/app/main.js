@@ -15,4 +15,79 @@ const BASE_URL ="https://api.weatherapi.com/v1";
 *   @param {boolean} includeAqi - Inclui dados de qualidade do ar
 *   @returns {Promise<Object>} Dados meteorológicos
 */
-// API Viagens
+async function getCurrentWeather(location, includeAqi = true) {
+    const params = new URLSearchParams({
+        key: API_KEY,
+        q: location,
+        aqi: includeAqi ? 'yes' : 'no',
+    });
+    
+    const response = await fetch('${BASE_URL}/current.json?${params}');
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error('WeatherAPI codigo de error ${error.code}: ${error.error.message}');
+    }
+
+    return response.json();
+}
+
+/**
+* Obter previsão de ate 14 dias com detalhamento por hora
+* @param {string} location - Nome da cidade, lat/lon, código postal, endereço IP
+* @param {number} days - Número de dias (1-14)
+* @returns {Promise<Object>} Dados da previsão
+*/
+async function getForecast(location, days) {
+    const params = new URLSearchParams({
+        key: API_KEY,
+        q: location,
+        days: days,
+        aqi: 'yes',
+        alerts: 'yes',
+    });
+
+    const response = await fetch('${BASE_URL}/forecast.json?${params}');
+
+    if(!response.ok) {
+        const error = await response.json();
+        throw new  Error('WeatherAPI codigo de error ${error.code}: ${error.error.message}');
+    }
+
+    return response.json();
+}
+
+/**
+* Pesquisar/autocompletar locais
+* @param {string} query - Nome parcial da cidade
+* @returns {Promise<Array>} Lista de locais correspondentes
+*/
+async function searchLocations(query) {
+    const params = new URLSearchParams({
+        keys: API_KEY,
+        q: query,
+    });
+   
+    const response = await fetch('${BASE_URL}/search.json?${params}');
+
+    if(!response.ok) {
+        const error = await response.json();
+        throw new  Error('WeatherAPI codigo de error ${error.code}: ${error.error.message}');
+    }
+
+    return response.json();
+}
+
+// Personaliza main conforme requisitos
+async function main() {
+    try{
+        const location = document.getElementById("destino").value;
+        const initialDate = document.getElementById("data-inicio").value;
+        const finalDate= document.getElementById("data-fim");
+        const differenceDays = finalDate-initialDate;
+        
+        const current = await getCurrentWeather(location);
+
+        
+    }
+}
