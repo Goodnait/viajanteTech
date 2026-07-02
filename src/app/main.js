@@ -57,26 +57,6 @@ async function getForecast(location, days) {
     return response.json();
 }
 
-/**
-* Pesquisar/autocompletar locais
-* @param {string} query - Nome parcial da cidade
-* @returns {Promise<Array>} Lista de locais correspondentes
-*/
-async function searchLocations(query) {
-    const params = new URLSearchParams({
-        keys: API_KEY,
-        q: query,
-    });
-   
-    const response = await fetch('${BASE_URL}/search.json?${params}');
-
-    if(!response.ok) {
-        const error = await response.json();
-        throw new  Error('WeatherAPI codigo de error ${error.code}: ${error.error.message}');
-    }
-
-    return response.json();
-}
 
 // Personaliza main conforme requisitos
 async function main() {
@@ -86,8 +66,21 @@ async function main() {
         const finalDate= document.getElementById("data-fim");
         const differenceDays = finalDate-initialDate;
         
+        // Cidade destino
         const current = await getCurrentWeather(location);
-
+        const {location, current: weather } = current;
+         
+        // Clima do destino
+        const forecast = await getForecast(location.name, differenceDays);
+        forecast.forecast.forecastday.forEach((day) => {
+            // voltar dados previsão de tempo 
+        }); 
         
+        let 
+    } catch (error) {
+        alert('Error:', error.message);
     }
 }
+
+
+main();
