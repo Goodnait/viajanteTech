@@ -57,14 +57,23 @@ async function getForecast(location, days) {
     return response.json();
 }
 
-// Funcao Salvar Dados em lista localStorage
+/** 
+ * Salva os dados de viagem no histórico do localStorage
+ * @param {string} origin - Local de origem
+ * @param {Object} location - Objeto com informações da cidade destino
+ * @param {string} initialDate - Data de ida
+ * @param {string} finalDate - Data de volta
+ * @param {number} differenceDays - Diferença em dias entre ida e volta
+ * @param {Object} weather - Objeto com informações do clima atual
+ * @returns {Array} Lista atualizada de viagens salvas no localStorage      
+*/
 async function historySave(origin, location, initialDate, finalDate, differenceDays, weather)  {
-  let dataObj = {
+  const dataObj = {
     Origem: origin,
     Cidade: location.name,
     DataIda: initialDate,
     DataVolta: finalDate,
-    Dias = {
+    Dias: {
         Dias: differenceDays,
         Condicao: weather.condition.text,
         Temp: weather.temp_c,
@@ -75,13 +84,17 @@ async function historySave(origin, location, initialDate, finalDate, differenceD
         UV: weather.uv
     }  
   };
-  
-  
+  let datasList = JSON.parse(localStorage.getItem('datasList')) || [];
+  datasList.push(dataObj);
+  localStorage.setItem('datasList', JSON.stringify(datasList));
+  return datasList; 
 }
 
 
 
-// Personaliza main conforme requisitos
+/** * Função principal que obtém os dados de viagem e clima, e salva no histórico
+ * @returns {Promise<void>}
+ */
 async function main() {
     try{
         const origin = document.getElementById("origem").value;
@@ -90,11 +103,11 @@ async function main() {
         const finalDate= document.getElementById("data-fim");
         const differenceDays = finalDate-initialDate;
         
-        // Cidade destino
+        // Obtém as condições meteorológicas atuais do local
         const current = await getCurrentWeather(location);
         const {location, current: weather } = current;
          
-        // Clima do destino
+        // Obtém a previsão do tempo para os próximos dias
         const forecast = await getForecast(location.name, differenceDays);
         forecast.forecast.forecastday.forEach((day) => {
             day.date;
@@ -106,8 +119,14 @@ async function main() {
             day.day.uv;
         }); 
         
+        // Salva os dados no localStorage
         let datasList = await historySave(origin, location, initialDate, finalDate, differenceDays, weather) || [];
         
+        // Se fechar a aba do navegador, o localStorage é limpo
+        window.addEventListener('load', () => {
+            localStorage.removeItem('datasList');
+        });
+
     } catch (error) {
         alert('Error:', error.message);
     }
