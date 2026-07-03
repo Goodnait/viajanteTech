@@ -150,6 +150,24 @@ function printHistory(datasList) {
     });
 }
 
+/**
+ * Função de iniciar 
+ */
+function initial() {
+    document.getElementById("btn-iniciar").addEventListener("click", function() {
+    // Cria o objeto de áudio
+    var audio = new Audio("src/midia/win31.mp3"); 
+    audio.play();
+
+    // Aguarda o áudio começar e depois redireciona
+    audio.onended = function() {
+      window.location.href = "page2.html";
+    };
+  });
+   //  Executa a função principal
+   main();
+}
+
 /** * Função principal que obtém os dados de viagem e clima, e salva no histórico
  * @returns {Promise<void>}
  */
@@ -193,7 +211,10 @@ async function main() {
     }
 }
 
-//  Executa a função principal
-main();
+
+
+
+
+
 // Exibe o histórico de viagens salvas
 printHistory(datasList);

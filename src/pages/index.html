@@ -10,23 +10,8 @@
 <body class="home-page">
     <div class="container">
         <h1>Bem-vindo ao TRIP PLANNER</h1>
-        <button id="btn-iniciar" target="_blank">Iniciar</button>
-    </div>
-
-<script>
-  document.getElementById("btn-iniciar").addEventListener("click", function() {
-    // Cria o objeto de áudio
-    var audio = new Audio("../midia/win31.mp3"); 
-    audio.play();
-
-    // Aguarda o áudio começar e depois redireciona
-    audio.onended = function() {
-      window.location.href = "page2.html";
-    };
-  });
-</script>
-
-    
+        <button id="btn-iniciar" target="_blank" onclick="initial()">Iniciar</button>
+    </div> 
 </body>
 </html>
 
