@@ -168,14 +168,13 @@ function initial() {
                 });
 
             audio.addEventListener("ended", () => {
-                window.location.href = "page2.html";
+                window.location.href = "../pages/page2.html";
             });
         });
+        
     }
 }
-    // Executa a função principal
-    main();
-
+   
 
 /** * Função principal que obtém os dados de viagem e clima, e salva no histórico
  * @returns {Promise<void>}
@@ -221,9 +220,7 @@ async function main() {
 }
 
 
-
-
-
-
+// Executa a função principal
+        main();
 // Exibe o histórico de viagens salvas
 printHistory(datasList);
