@@ -183,9 +183,6 @@ async function main() {
         // Salva os dados no localStorage
         let datasList = await historySave(origin, location, initialDate, finalDate, differenceDays, weather) || [];
 
-        // Exibe o histórico de viagens salvas
-        await printHistory(datasList);
-        
         // Se fechar a aba do navegador, o localStorage é limpo
         window.addEventListener('load', () => {
             localStorage.removeItem('datasList');
@@ -196,4 +193,7 @@ async function main() {
     }
 }
 
+//  Executa a função principal
 main();
+// Exibe o histórico de viagens salvas
+await printHistory(datasList);
