@@ -124,7 +124,7 @@ async function historySave(origin, location, initialDate, finalDate, differenceD
  *  Imprime o histórico de viagens salvas no localStorage na tela
  * @param {*} datasList 
  */
-async function printHistory(datasList) {
+function printHistory(datasList) {
     const historyContainer = document.getElementById('history');
     historyContainer.innerHTML = ''; // Limpa o conteúdo anterior
 
@@ -196,4 +196,4 @@ async function main() {
 //  Executa a função principal
 main();
 // Exibe o histórico de viagens salvas
-await printHistory(datasList);
+printHistory(datasList);
