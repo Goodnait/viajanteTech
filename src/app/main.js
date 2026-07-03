@@ -52,11 +52,11 @@ async function getCurrentWeather(location, includeAqi = true) {
         aqi: includeAqi ? 'yes' : 'no',
     });
     
-    const response = await fetch('${BASE_URL}/current.json?${params}');
+    const response = await fetch(`${BASE_URL}/current.json?${params}`);
 
     if (!response.ok) {
         const error = await response.json();
-        throw new Error('WeatherAPI codigo de error ${error.code}: ${error.error.message}');
+        throw new Error(`WeatherAPI código ${error.error.code}: ${error.error.message}`);
     }
 
     return response.json();
@@ -210,7 +210,7 @@ async function main() {
         let datasList = await historySave(origin, location, initialDate, finalDate, differenceDays, weather) || [];
 
         // Se fechar a aba do navegador, o localStorage é limpo
-        window.addEventListener('load', () => {
+        window.addEventListener('beforeunload', () => {
             localStorage.removeItem('datasList');
         });
 
