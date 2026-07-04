@@ -10,13 +10,13 @@ const BASE_URL ="https://api.weatherapi.com/v1";
 /**
  * Valida os campos de entrada do formulário
  * @param {string} origin - Local de origem
- * @param {string} location - Local de destino
+ * @param {string} destination - Local de destino
  * @param {string} initialDate - Data de ida
  * @param {string} finalDate - Data de volta
  * @param {number} differenceDays - Diferença em dias entre ida e volta
  * @returns{Error} Lança um erro se algum campo for inválido
  */
-function validateFields(origin, destination, initialDate, finalDate, differenceDays) {
+async function validateFields(origin, destination, initialDate, finalDate, differenceDays) {
 
     if (!origin || !destination || !initialDate || !finalDate) {
         throw new Error('Todos os campos são obrigatórios.');
@@ -189,8 +189,8 @@ function initial() {
  */
 async function main() {
     try{
-        const origin = document.getElementById("origem").value;
-        const destination = document.getElementById("destino").value;
+        const origin = document.getElementById("origem");
+        const destination = document.getElementById("destino");
         const initialDate = document.getElementById("data-inicio").value;
         const finalDate= document.getElementById("data-fim").value;
         const start = new Date(initialDate);
@@ -198,7 +198,7 @@ async function main() {
         const differenceDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
         
         // Valida os campos de entrada
-        validateFields(origin, destination, initialDate, finalDate, differenceDays);
+        await validateFields(origin, destination, initialDate, finalDate, differenceDays);
 
         // Obtém as condições meteorológicas atuais do local
         const current = await getCurrentWeather(destination);
@@ -224,8 +224,7 @@ async function main() {
 }
 
 // Executa a função principal
-document.addEventListener("DOMContentLoaded", () => {
+document.getElementById("btn-iniciar").addEventListener("click", () => {
     initial();
     main();
 });
-
