@@ -233,6 +233,4 @@ async function main() {
 
 
 // Executa a função principal
-        main();
-// Exibe o histórico de viagens salvas
-printHistory(datasList);
+main();
