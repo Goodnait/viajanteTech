@@ -100,30 +100,29 @@ async function getForecast(location, days) {
 /** 
  * Salva os dados de viagem no histórico do localStorage
  * @param {string} origin - Local de origem
- * @param {Object} location - Objeto com informações da cidade destino
+ * @param {Object} destination - Objeto com informações da cidade destino
  * @param {string} initialDate - Data de ida
  * @param {string} finalDate - Data de volta
  * @param {number} differenceDays - Diferença em dias entre ida e volta
  * @param {Object} weather - Objeto com informações do clima atual
  * @returns {Array} Lista atualizada de viagens salvas no localStorage      
 */
-async function historySave(origin, destination, initialDate, finalDate, differenceDays, weather)  {
+async function historySave(origin, destination, initialDate, finalDate, differenceDays, weather, forecast) {
   const dataObj = {
     Origem: origin,
     Cidade: destination.name,
     DataIda: initialDate,
     DataVolta: finalDate,
-    Dias: {
-        Dias: differenceDays,
-        Condicao: weather.condition.text,
-        Clima: {
-            Condicao: weather.condition.text,
-            Temperatura: weather.temp_c
-        },
-        Chuva: weather.daily_chance_of_rain,
-        Vento: weather.wind_kph,
-        UV: weather.uv
-    }  
+    Dias: differenceDays,
+    Clima: {
+        Condicao: forecast.day.condition.text,
+        Temp: forecast.day.avgtemp_c,
+        TempMin: forecast.day.mintemp_c,
+        TempMax: forecast.day.maxtemp_c,
+        Chuva: forecast.day.daily_chance_of_rain,
+        Vento: forecast.day.maxwind_kph,
+        UV: forecast.day.uv
+    }
   };
   let datasList = JSON.parse(localStorage.getItem('datasList')) || [];
   datasList.push(dataObj);
@@ -182,11 +181,9 @@ function initial() {
                 window.location.href = "../pages/page2.html";
             });
         });
-        
     }
 }
    
-
 /** * Função principal que obtém os dados de viagem e clima, e salva no histórico
  * @returns {Promise<void>}
  */
@@ -196,7 +193,9 @@ async function main() {
         const destination = document.getElementById("destino").value;
         const initialDate = document.getElementById("data-inicio").value;
         const finalDate= document.getElementById("data-fim").value;
-        let differenceDays = finalDate-initialDate;
+        const start = new Date(initialDate);
+        const end = new Date(finalDate);
+        const differenceDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
         
         // Valida os campos de entrada
         validateFields(origin, destination, initialDate, finalDate, differenceDays);
@@ -205,21 +204,14 @@ async function main() {
         const current = await getCurrentWeather(destination);
         
         const {location, current: weather } = current;
-        location = destination; 
+        
         // Obtém a previsão do tempo para os próximos dias
-        const forecast = await getForecast(location, differenceDays);
-        forecast.forecast.forecastday.forEach((day) => {
-            day.date;
-            day.day.condition.text;
-            day.day.maxtemp_c;
-            day.day.mintemp_c;
-            day.day.wind_kph;
-            day.day.daily_chance_of_rain; 
-            day.day.uv;
-        }); 
+        const forecast = await getForecast(destination, Math.min(1, differenceDays));
         
         // Salva os dados no localStorage
-        let datasList = await historySave(origin, destination, initialDate, finalDate, differenceDays, weather) || [];
+        let datasList = await historySave(origin, current.location, initialDate, finalDate, differenceDays, weather, forecast.forecast.forecastday) || [];
+
+        printHistory(datasList);
 
         // Se fechar a aba do navegador, o localStorage é limpo
         window.addEventListener('beforeunload', () => {
@@ -227,10 +219,13 @@ async function main() {
         });
 
     } catch (error) {
-        alert('Error:', error.message);
+        alert(`Erro: ${error.message}`);
     }
 }
 
-
 // Executa a função principal
-main();
+document.addEventListener("DOMContentLoaded", () => {
+    initial();
+    main();
+});
+
