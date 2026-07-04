@@ -200,7 +200,7 @@ async function main() {
 }
 
 // Adiciona o evento de clique ao botão "Iniciar" para tocar o áudio e redirecionar para a página 2
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("click", () => {
     const btnIniciar = document.getElementById("btn-iniciar");
 
     btnIniciar.addEventListener("click", () => {
@@ -218,16 +218,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // Adiciona o evento de clique ao botão "Salvar viagem" para chamar a função main e salvar os dados no localStorage
-const btnSalvarViagem = document.getElementById("btn-salvar");
-btnSalvarViagem.addEventListener("click", async () => {
-    await main();
-    const datasList = await historySave(
-        origin,
-        current.location,
-        initialDate,
-        finalDate,
-        differenceDays,
-        weather,
-        forecast.forecast.forecastday
-    );
+document.addEventListener("DOMContentLoaded", () => {
+    const btnSalvarViagem = document.getElementById("btn-salvar");
+    if (btnSalvarViagem) {
+        btnSalvarViagem.addEventListener("click", async () => {
+            await main();
+        });
+    }
 });
