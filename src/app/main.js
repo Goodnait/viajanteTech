@@ -16,24 +16,34 @@ const BASE_URL ="https://api.weatherapi.com/v1";
  * @param {number} differenceDays - Diferença em dias entre ida e volta
  * @returns{Error} Lança um erro se algum campo for inválido
  */
-function validateFields(origin, location, initialDate, finalDate, differenceDays) {
+function validateFields(origin, destination, initialDate, finalDate, differenceDays) {
+
+    if (!origin || !destination || !initialDate || !finalDate) {
+        throw new Error('Todos os campos são obrigatórios.');
+    }
+
     const dataInicio = new Date(initialDate + 'T00:00:00');
     const dataFim = new Date(finalDate + 'T00:00:00');
+
+    if (isNaN(dataInicio.getTime()) || isNaN(dataFim.getTime())) {
+        throw new Error('Data inválida.');
+    }
+
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Define a hora para 00:00:00 para comparar apenas a data
-    
+    today.setHours(0, 0, 0, 0);
+
     if (dataInicio < today) {
         throw new Error('A data de ida não pode ser anterior à data atual.');
     }
+
     if (dataFim < today) {
         throw new Error('A data de volta não pode ser anterior à data atual.');
     }
-    if (!origin || !location || !initialDate || !finalDate) {
-        throw new Error('Todos os campos são obrigatórios.');
-    }
+
     if (differenceDays < 0) {
         throw new Error('A data de volta não pode ser anterior à data de ida.');
     }
+
     if (differenceDays > 14) {
         throw new Error('A diferença entre as datas não pode ser superior a 14 dias.');
     }
@@ -97,10 +107,10 @@ async function getForecast(location, days) {
  * @param {Object} weather - Objeto com informações do clima atual
  * @returns {Array} Lista atualizada de viagens salvas no localStorage      
 */
-async function historySave(origin, location, initialDate, finalDate, differenceDays, weather)  {
+async function historySave(origin, destination, initialDate, finalDate, differenceDays, weather)  {
   const dataObj = {
     Origem: origin,
-    Cidade: location.name,
+    Cidade: destination.name,
     DataIda: initialDate,
     DataVolta: finalDate,
     Dias: {
@@ -183,20 +193,21 @@ function initial() {
 async function main() {
     try{
         const origin = document.getElementById("origem").value;
-        const location = document.getElementById("destino").value;
-        const initialDate = document.getElementById("data-inicio").min = new Date().toISOString().split("T")[0]; // Define a data mínima como a data atual
-        const finalDate= document.getElementById("data-fim").min = new Date().toISOString().split("T")[0]; // Define a data mínima como a data atual
-        const differenceDays = finalDate-initialDate;
+        const destination = document.getElementById("destino").value;
+        const initialDate = document.getElementById("data-inicio").value;
+        const finalDate= document.getElementById("data-fim").value;
+        let differenceDays = finalDate-initialDate;
         
         // Valida os campos de entrada
-        validateFields(origin, location, initialDate, finalDate, differenceDays);
+        validateFields(origin, destination, initialDate, finalDate, differenceDays);
 
         // Obtém as condições meteorológicas atuais do local
-        const current = await getCurrentWeather(location);
+        const current = await getCurrentWeather(destination);
+        
         const {location, current: weather } = current;
-         
+        location = destination; 
         // Obtém a previsão do tempo para os próximos dias
-        const forecast = await getForecast(location.name, differenceDays);
+        const forecast = await getForecast(location, differenceDays);
         forecast.forecast.forecastday.forEach((day) => {
             day.date;
             day.day.condition.text;
@@ -208,7 +219,7 @@ async function main() {
         }); 
         
         // Salva os dados no localStorage
-        let datasList = await historySave(origin, location, initialDate, finalDate, differenceDays, weather) || [];
+        let datasList = await historySave(origin, destination, initialDate, finalDate, differenceDays, weather) || [];
 
         // Se fechar a aba do navegador, o localStorage é limpo
         window.addEventListener('beforeunload', () => {
