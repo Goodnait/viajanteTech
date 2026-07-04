@@ -16,7 +16,7 @@ const BASE_URL ="https://api.weatherapi.com/v1";
  * @param {number} differenceDays - Diferença em dias entre ida e volta
  * @returns{Error} Lança um erro se algum campo for inválido
  */
-async function validateFields(origin, location, initialDate, finalDate, differenceDays) {
+function validateFields(origin, location, initialDate, finalDate, differenceDays) {
     const dataInicio = new Date(initialDate + 'T00:00:00');
     const dataFim = new Date(finalDate + 'T00:00:00');
     const today = new Date();
@@ -81,7 +81,7 @@ async function getForecast(location, days) {
 
     if(!response.ok) {
         const error = await response.json();
-        throw new  Error(`WeatherAPI codigo de error ${error.code}: ${error.error.message}`);
+        throw new  Error(`WeatherAPI codigo de error ${error.error.code}: ${error.error.message}`);
     }
 
     return response.json();
@@ -106,9 +106,10 @@ async function historySave(origin, location, initialDate, finalDate, differenceD
     Dias: {
         Dias: differenceDays,
         Condicao: weather.condition.text,
-        Temp: weather.temp_c,
-        TempMin: weather.mintemp_c,
-        TempMax: weather.maxtemp_c,
+        Clima: {
+            Condicao: weather.condition.text,
+            Temperatura: weather.temp_c
+        },
         Chuva: weather.daily_chance_of_rain,
         Vento: weather.wind_kph,
         UV: weather.uv
@@ -188,7 +189,7 @@ async function main() {
         const differenceDays = finalDate-initialDate;
         
         // Valida os campos de entrada
-        await validateFields(origin, location, initialDate, finalDate, differenceDays);
+        validateFields(origin, location, initialDate, finalDate, differenceDays);
 
         // Obtém as condições meteorológicas atuais do local
         const current = await getCurrentWeather(location);
