@@ -189,8 +189,8 @@ function initial() {
  */
 async function main() {
     try{
-        const origin = document.getElementById("origem");
-        const destination = document.getElementById("destino");
+        const origin = document.getElementById("origem").value;
+        const destination = document.getElementById("destino").value;
         const initialDate = document.getElementById("data-inicio").value;
         const finalDate= document.getElementById("data-fim").value;
         const start = new Date(initialDate);
@@ -224,7 +224,20 @@ async function main() {
 }
 
 // Executa a função principal
-document.getElementById("btn-iniciar").addEventListener("click", () => {
+document.getElementById("btn-iniciar").addEventListener("click", async () => {
     initial();
-    main();
+    await main();
+});
+
+document.getElementById("btnSalvar").addEventListener("click", async () => {
+    await main();
+    const datasList = await historySave(
+        origin,
+        current.location,
+        initialDate,
+        finalDate,
+        differenceDays,
+        weather,
+        forecast.forecast.forecastday
+    );
 });
