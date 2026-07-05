@@ -185,7 +185,7 @@ async function main() {
         const forecast = await getForecast(destination, Math.min(1, differenceDays));
         
         // Salva os dados no localStorage
-        let datasList = await historySave(origin, current.location, initialDate, finalDate, differenceDays, weather, forecast.forecast.forecastday) || [];
+        let datasList = await historySave(origin, current.location, initialDate, finalDate, differenceDays, weather, forecast) || [];
 
         printHistory(datasList);
 
