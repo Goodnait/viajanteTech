@@ -115,7 +115,6 @@ async function historySave(origin, destination, initialDate, finalDate, differen
     DataVolta: finalDate,
     Dias: differenceDays,
     Clima: {
-        Cidade: current.location.name,
         Condicao: forecast.condition.text,
         Temp: forecast.avgtemp_c,
         TempMin: forecast.mintemp_c,
@@ -181,8 +180,7 @@ async function main() {
         const current = await getCurrentWeather(destination);
         
         const {location, current: weather } = current;
-        location.name = destination; // Adiciona o nome da cidade ao objeto location
-        
+                
         // Obtém a previsão do tempo para os próximos dias
         const forecast = await getForecast(location, Math.min(1, differenceDays));
         
