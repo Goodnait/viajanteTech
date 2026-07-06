@@ -108,20 +108,22 @@ async function getForecast(location, days) {
  * @returns {Array} Lista atualizada de viagens salvas no localStorage      
 */
 async function historySave(origin, destination, initialDate, finalDate, differenceDays, current, forecast) {
-  const dataObj = {
+    const day = forecast.forecast.forecastday[0].day;
+    const dataObj = {
     Origem: origin,
     Destino: destination,
     DataIda: initialDate,
     DataVolta: finalDate,
     Dias: differenceDays,
     Clima: {
-        Condicao: forecast.condition.text,
-        Temp: forecast.avgtemp_c,
-        TempMin: forecast.mintemp_c,
-        TempMax: forecast.maxtemp_c,
-        Chuva: forecast.daily_chance_of_rain,
-        Vento: forecast.maxwind_kph,
-        UV: forecast.uv
+        Cidade: Location.name,
+        Condicao: forecast.forecast.forecastday[day].condition.text,
+        Temp: forecast.forecast.forecastday[day].avgtemp_c,
+        TempMin: forecast.forecast.forecastday[day].mintemp_c,
+        TempMax: forecast.forecast.forecastday[day].maxtemp_c,
+        Chuva: forecast.forecast.forecastday[day].daily_chance_of_rain,
+        Vento: forecast.forecast.forecastday[day].maxwind_kph,
+        IndiceUV: forecast.forecast.forecastday[day].uv
     }
   };
   let datasList = JSON.parse(localStorage.getItem('datasList')) || [];
