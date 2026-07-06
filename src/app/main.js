@@ -182,7 +182,7 @@ async function main() {
         const {location, current: weather } = current;
                 
         // Obtém a previsão do tempo para os próximos dias
-        const forecast = await getForecast(location, Math.min(1, differenceDays));
+        const forecast = await getForecast(location.name, Math.min(14, Math.max(1, differenceDays)));
         
         // Salva os dados no localStorage
         let datasList = await historySave(origin, destination, initialDate, finalDate, differenceDays, current, forecast) || [];
